@@ -12,7 +12,7 @@ interface QuotesDao {
     @Insert
     suspend fun insertRandomQuote(randomQuoteDB: RandomQuoteDB)
 
-    @Query("SELECT * FROM randomQuote")
+    @Query("SELECT * FROM randomQuote ORDER BY id DESC")
     fun getAllRandomQuotes(): Flow<List<RandomQuoteDB>>
 
 }

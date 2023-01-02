@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             quotesViewModel.randomQuotesList.observe(this@MainActivity) {
                 randomQuotesAdapter.submitList(it)
+                binding.quotesRecyclerView.smoothScrollToPosition(0)
             }
         }
     }
