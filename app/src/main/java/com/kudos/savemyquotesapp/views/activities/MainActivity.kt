@@ -4,21 +4,17 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.*
 import com.kudos.savemyquotesapp.databinding.ActivityMainBinding
 import com.kudos.savemyquotesapp.viewmodels.QuotesViewModel
 import com.kudos.savemyquotesapp.views.adapters.RandomQuotesAdapter
 import com.kudos.savemyquotesapp.worker.RandomQuoteFetchingWorker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var randomQuotesAdapter: RandomQuotesAdapter
     private lateinit var binding: ActivityMainBinding
 
     private val quotesViewModel: QuotesViewModel by viewModels()
@@ -27,9 +23,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupQuotesList()
+        binding.lifecycleOwner = this
+        binding.quotesViewModel = quotesViewModel
+        binding.quotesRecyclerView.adapter = RandomQuotesAdapter {}
         startRandomQuoteFetchingWorker()
-        observeQuotes()
     }
 
     private fun startRandomQuoteFetchingWorker() {
@@ -40,36 +37,34 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val myTestWorkerRequest =
-            PeriodicWorkRequestBuilder<RandomQuoteFetchingWorker>(15, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<RandomQuoteFetchingWorker>(
+                PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MINUTES
+            )
+                //to send some data in worker class
                 .setInputData(workDataOf("myKey" to "myValue"))
+                //to set some constraints in worker class
                 .setConstraints(constraints)
+                //in case of retry
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS
+                )
                 .build()
 
-        workManager.enqueue(myTestWorkerRequest)
+        workManager.enqueueUniquePeriodicWork(
+            "RandomQuoteFetcher",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            myTestWorkerRequest
+        )
 
         workManager.getWorkInfoByIdLiveData(myTestWorkerRequest.id).observe(this) { workInfo ->
             Log.d(TAG, "IN ACTIVITY: ${workInfo.state}")
             if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                //to get returned result or data from worker class
                 val workerResult = workInfo.outputData.getString("workerKey")
                 Log.d(TAG, "IN ACTIVITY: $workerResult")
             }
-        }
-    }
-
-    private fun observeQuotes() {
-        lifecycleScope.launch {
-            quotesViewModel.randomQuotesList.observe(this@MainActivity) {
-                randomQuotesAdapter.submitList(it)
-                binding.quotesRecyclerView.smoothScrollToPosition(0)
-            }
-        }
-    }
-
-    private fun setupQuotesList() {
-        randomQuotesAdapter = RandomQuotesAdapter {}
-        binding.quotesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = randomQuotesAdapter
         }
     }
 

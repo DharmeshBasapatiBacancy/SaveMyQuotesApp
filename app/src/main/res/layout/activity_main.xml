@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/_10sdp"
-    tools:context=".views.activities.MainActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/quotesRecyclerView"
+    <data>
+
+        <variable
+            name="quotesViewModel"
+            type="com.kudos.savemyquotesapp.viewmodels.QuotesViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        tools:listitem="@layout/row_item_quotes"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:padding="@dimen/_10sdp"
+        tools:context=".views.activities.MainActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/quotesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:quotesList="@{quotesViewModel.randomQuotesList}"
+            tools:listitem="@layout/row_item_quotes" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -39,10 +39,7 @@ class RandomQuotesAdapter(private val onItemClick: (RandomQuoteDB) -> Unit) :
         with(holder) {
             rowItemQuotesBinding.apply {
                 val item = getItem(position)
-
-                quoteContentTV.text = item.quoteContent
-                quoteAuthorTV.text = "- ${item.quoteAuthor}"
-
+                quote = item
                 itemView.setOnClickListener {
                     onItemClick(item)
                 }

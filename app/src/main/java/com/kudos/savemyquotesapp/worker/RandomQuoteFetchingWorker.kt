@@ -11,7 +11,6 @@ import com.kudos.savemyquotesapp.repository.QuotesRepository
 import com.kudos.savemyquotesapp.utils.makeStatusNotification
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import javax.inject.Inject
 
 @HiltWorker
 class RandomQuoteFetchingWorker @AssistedInject constructor(

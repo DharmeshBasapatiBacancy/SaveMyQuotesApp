@@ -9,7 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class QuotesViewModel @Inject constructor(private val quotesRepository: QuotesRepository) :
+class QuotesViewModel @Inject constructor(quotesRepository: QuotesRepository) :
     ViewModel() {
 
     val randomQuotesList: LiveData<List<RandomQuoteDB>> =
