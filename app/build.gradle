@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -60,6 +61,7 @@ dependencies {
     def room_version = "2.4.3"
     def retrofit_version = "2.9.0"
     def okhttp_version = "4.9.3"
+    def nav_version = "2.5.3"
 
     implementation("androidx.work:work-runtime-ktx:$work_version")
     implementation("androidx.hilt:hilt-common:$work_with_hilt_version")
@@ -99,4 +101,8 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+
+    //NavGraph
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 }

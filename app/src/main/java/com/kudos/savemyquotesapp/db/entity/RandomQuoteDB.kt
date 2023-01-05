@@ -9,4 +9,4 @@ data class RandomQuoteDB(
     val id: Int = 0,
     val quoteAuthor: String,
     val quoteContent: String
-)
+):java.io.Serializable
